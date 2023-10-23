@@ -13,7 +13,10 @@
     "website": "https://github.com/OCA/stock-logistics-reporting",
     "category": "Warehouse Management",
     "license": "AGPL-3",
-    "depends": ["sale_stock"],
+    "depends": [
+        "stock",
+        "sale_stock",
+    ],
     "data": [
         "views/res_partner_view.xml",
         "views/stock_picking_view.xml",
