@@ -20,7 +20,7 @@
     "data": [
         "views/res_partner_view.xml",
         "views/stock_picking_view.xml",
-        "report/stock_picking_report_valued.xml"
+        # "report/stock_picking_report_valued.xml"
     ],
     "installable": True,
 }

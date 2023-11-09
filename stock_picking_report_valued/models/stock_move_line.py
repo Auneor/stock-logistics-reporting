@@ -97,42 +97,43 @@ class StockMoveLine(models.Model):
                 }
             )
 
-    def _get_aggregated_product_quantities(self, **kwargs):
-        aggregated_move_lines = super()._get_aggregated_product_quantities( **kwargs)
-        def get_aggregated_properties(move_line=False, move=False):
-            move = move or move_line.move_id
-            uom = move.product_uom or move_line.product_uom_id
-            name = move.product_id.display_name
-            description = move.description_picking
-            if description == name or description == move.product_id.name:
-                description = False
-            product = move.product_id
-            line_key = f'{product.id}_{product.display_name}_{description or ""}_{uom.id}'
-            return (line_key, name, description, uom)
-
-        for move_line in self:
-            if kwargs.get('except_package') and move_line.result_package_id:
-                continue
-            line_key, name, description, uom = get_aggregated_properties(move_line=move_line)
-            if line_key not in aggregated_move_lines:
-                aggregated_move_lines[line_key] = {
-                                                   'sale_price_unit': move_line.sale_price_unit,
-                                                   'sale_discount': move_line.sale_discount,
-                                                   'sale_price_subtotal': move_line.sale_price_subtotal,
-                                                   'sale_tax_description': move_line.sale_tax_description,
-                                                   'currency': move_line.currency_id
-                }
-            else:
-                # On vérifie une seule clé
-                if 'sale_price_subtotal' not in aggregated_move_lines[line_key]:
-                    aggregated_move_lines[line_key]['sale_price_unit'] = move_line.sale_price_unit
-                    aggregated_move_lines[line_key]['sale_discount'] = move_line.sale_discount
-                    aggregated_move_lines[line_key]['sale_price_subtotal'] = move_line.sale_price_subtotal
-                    aggregated_move_lines[line_key]['sale_tax_description'] = move_line.sale_tax_description
-                    aggregated_move_lines[line_key]['currency'] = move_line.currency_id
-                else:
-                    aggregated_move_lines[line_key]['sale_price_unit'] += move_line.sale_price_unit
-                    aggregated_move_lines[line_key]['sale_discount'] += move_line.sale_discount
-                    aggregated_move_lines[line_key]['sale_price_subtotal'] += move_line.sale_price_subtotal
-                    aggregated_move_lines[line_key]['sale_tax_description'] += " " + move_line.sale_tax_description
-        return aggregated_move_lines
+    # def _get_aggregated_product_quantities(self, **kwargs):
+    #     aggregated_move_lines = super()._get_aggregated_product_quantities( **kwargs)
+    #     def get_aggregated_properties(move_line=False, move=False):
+    #         move = move or move_line.move_id
+    #         uom = move.product_uom or move_line.product_uom_id
+    #         name = move.product_id.display_name
+    #         description = move.description_picking
+    #         if description == name or description == move.product_id.name:
+    #             description = False
+    #         product = move.product_id
+    #         line_key = f'{product.id}_{product.display_name}_{description or ""}_{uom.id}'
+    #         return (line_key, name, description, uom)
+    #
+    #     for move_line in self:
+    #         if kwargs.get('except_package') and move_line.result_package_id:
+    #             continue
+    #         line_key, name, description, uom = get_aggregated_properties(move_line=move_line)
+    #         if line_key not in aggregated_move_lines:
+    #             aggregated_move_lines[line_key] = {
+    #                                                'sale_price_unit': move_line.sale_price_unit,
+    #                                                'sale_discount': move_line.sale_discount,
+    #                                                'sale_price_subtotal': move_line.sale_price_subtotal,
+    #                                                'sale_tax_description': move_line.sale_tax_description,
+    #                                                'currency': move_line.currency_id
+    #             }
+    #         else:
+    #             # On vérifie une seule clé
+    #             if 'sale_price_subtotal' not in aggregated_move_lines[line_key]:
+    #                 aggregated_move_lines[line_key]['sale_price_unit'] = move_line.sale_price_unit
+    #                 aggregated_move_lines[line_key]['sale_discount'] = move_line.sale_discount
+    #                 aggregated_move_lines[line_key]['sale_price_subtotal'] = move_line.sale_price_subtotal
+    #                 aggregated_move_lines[line_key]['sale_tax_description'] = move_line.sale_tax_description
+    #                 aggregated_move_lines[line_key]['currency'] = move_line.currency_id
+    #                 aggregated_move_lines[line_key]['sale_ref'] = move_line.currency_id
+    #             else:
+    #                 aggregated_move_lines[line_key]['sale_price_unit'] += move_line.sale_price_unit
+    #                 aggregated_move_lines[line_key]['sale_discount'] += move_line.sale_discount
+    #                 aggregated_move_lines[line_key]['sale_price_subtotal'] += move_line.sale_price_subtotal
+    #                 aggregated_move_lines[line_key]['sale_tax_description'] += " " + move_line.sale_tax_description
+    #     return aggregated_move_lines
